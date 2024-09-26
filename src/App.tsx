@@ -1,36 +1,39 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import './scss/main.scss'
+import './App.css';
+import './scss/main.scss';
+import { useAppDispatch, useAppSelector } from './hooks/redux';
+import { decrement, increment } from './store/photos/photo.slice';
+import { useEffect } from 'react';
+import { fetchPhotos } from './store/photos/action';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const { photos, isLoading, error, count } = useAppSelector(state => state.photoReducer);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(fetchPhotos())
+  }, [])
+
+  if (isLoading) return <h1>Loading . . .</h1>
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <h1>{import.meta.env.VITE_TITLE}</h1>
+      <div className="photos-grid">
+        {photos.slice(0, 21).map(({ id, title, url }) => (
+          <div key={id} className="photo-card">
+            <h2>{title}</h2>
+            <img src={url} alt={title} className="photo" />
+          </div>
+        ))}
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
+      {error && <h1>{error}</h1>}
+      <div className="counter">
+        <button onClick={() => dispatch(decrement())}>-</button>
+        <h2>{count}</h2>
+        <button onClick={() => dispatch(increment())}>+</button>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
