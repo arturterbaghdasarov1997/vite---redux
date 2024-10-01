@@ -1,9 +1,11 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import photoReducer from "./photos/photo.slice";
+import { cocktailApi } from '../store/cocktails/cocktail.api';
 
 // STATE
 const rootReducer = combineReducers({
     photoReducer,
+    [cocktailApi.reducerPath]: cocktailApi.reducer,
 });
 export type RootState = ReturnType<typeof rootReducer>;
 
@@ -11,6 +13,7 @@ export type RootState = ReturnType<typeof rootReducer>;
 export const setupStore = () => configureStore({
   reducer: rootReducer,
   devTools: true,
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(cocktailApi.middleware)
 });
 
 // ACTION
