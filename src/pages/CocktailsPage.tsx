@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useFetchCocktailsQuery } from '../store/cocktails/cocktail.api';
+import { useFetchCocktailsQuery, usePrefetch } from '../store/cocktails/cocktail.api';
 import CocktailCard from '../components/CocktailsCard';
 
 const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');
@@ -8,6 +8,7 @@ const CocktailList: React.FC = () => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
   const [letter, setLetter] = useState('a');
+  const prefetch = usePrefetch('fetchCocktail')
 
   const { data: cocktails, isLoading } = useFetchCocktailsQuery({ page, per_page: perPage, letter });
 
@@ -21,8 +22,8 @@ const CocktailList: React.FC = () => {
         setPage(1);
       }}>
         <option value={10}>10</option>
-        <option value={20}>20</option>
-        <option value={50}>50</option>
+        <option value={15}>15</option>
+        <option value={25}>25</option>
       </select>
 
       <div style={{marginTop: "10px", marginBottom: "10px"}}>
@@ -38,7 +39,12 @@ const CocktailList: React.FC = () => {
       {cocktails && cocktails.length > 0 ? (
         <div className='cocktail-container'>
           {cocktails.map((cocktail) => (
-            <CocktailCard key={cocktail.idDrink} cocktail={cocktail} />
+            <button
+              key={cocktail.idDrink}
+              onMouseEnter={() => prefetch(Number(cocktail.idDrink), { ifOlderThan: 60 })}
+            >
+              <CocktailCard key={cocktail.idDrink} cocktail={cocktail} />
+            </button>
           ))}
         </div>
       ) : (

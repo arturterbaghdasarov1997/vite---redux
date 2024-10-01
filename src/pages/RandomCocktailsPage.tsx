@@ -1,9 +1,10 @@
 import React from 'react';
 import RandomCocktailsCard from '../components/RandomCocktailsCard';
-import { useFetchMultipleRandomCocktailsQuery } from '../store/cocktails/cocktail.api';
+import { useFetchMultipleRandomCocktailsQuery, usePrefetch } from '../store/cocktails/cocktail.api';
 
 const RandomCocktailsPage: React.FC = () => {
-  const { data: cocktails, isLoading } = useFetchMultipleRandomCocktailsQuery();
+  const { data: cocktails, isLoading } = useFetchMultipleRandomCocktailsQuery();;
+  const prefetch = usePrefetch('fetchCocktail')
 
   if (isLoading) return <h1>Loading random cocktails . . .</h1>;
 
@@ -13,7 +14,12 @@ const RandomCocktailsPage: React.FC = () => {
       {cocktails && cocktails.length > 0 ? (
         <div className='cocktail-container'>
           {cocktails.map((cocktail) => (
-            <RandomCocktailsCard key={cocktail.idDrink} cocktail={cocktail} />
+            <button
+              key={cocktail.idDrink}
+              onMouseEnter={() => prefetch(Number(cocktail.idDrink), { ifOlderThan: 60 })}
+            >
+              <RandomCocktailsCard key={cocktail.idDrink} cocktail={cocktail} />
+            </button>
           ))}
         </div>
       ) : (

@@ -48,7 +48,11 @@ export const cocktailApi = createApi({
         }
       },
     }),
+    fetchCocktail: builder.query<Drink, number>({
+      query: (idDrink: number) => `lookup.php?i=${idDrink}`,
+      transformResponse: (response: { drinks: Drink[] }) => response.drinks[0],
+    }),    
   }),
 });
 
-export const { useFetchCocktailsQuery, useFetchRandomCocktailsQuery, useFetchMultipleRandomCocktailsQuery } = cocktailApi;
+export const { useFetchCocktailsQuery, useFetchCocktailQuery, useFetchRandomCocktailsQuery, useFetchMultipleRandomCocktailsQuery, usePrefetch } = cocktailApi;
